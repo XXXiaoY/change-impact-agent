@@ -1,0 +1,56 @@
+[
+    {
+        "incident_id": "INC-4521",
+        "severity": "P1",
+        "date": "2025-03-15",
+        "title": "Refunds failing for international transactions",
+        "affected_files": ["src/services/payment_service.py"],
+        "root_cause": "Refund validation logic did not handle multi-currency amounts after code refactor",
+        "resolution": "Added currency conversion step before amount validation"
+    },
+    {
+        "incident_id": "INC-3892",
+        "severity": "P2",
+        "date": "2025-01-22",
+        "title": "Order cancellation timeout under high load",
+        "affected_files": ["src/services/order_service.py", "src/services/payment_service.py"],
+        "root_cause": "Synchronous refund call blocking order cancellation flow during peak traffic",
+        "resolution": "Made refund call async with 5s timeout"
+    },
+    {
+        "incident_id": "INC-3654",
+        "severity": "P2",
+        "date": "2024-11-08",
+        "title": "Inventory count going negative for flash sale items",
+        "affected_files": ["src/services/inventory_service.py"],
+        "root_cause": "Race condition in stock deduction - no optimistic locking on concurrent requests",
+        "resolution": "Added database-level optimistic locking with version column"
+    },
+    {
+        "incident_id": "INC-3201",
+        "severity": "P3",
+        "date": "2024-09-30",
+        "title": "Validation bypass allowing negative order amounts",
+        "affected_files": ["src/utils/validation.py", "src/services/order_service.py"],
+        "root_cause": "validate_positive_amount only checked for zero, not negative values",
+        "resolution": "Updated validation to reject amount <= 0"
+    },
+    {
+        "incident_id": "INC-2987",
+        "severity": "P1",
+        "date": "2024-08-14",
+        "title": "Payment gateway 5xx errors causing order state corruption",
+        "affected_files": ["src/services/payment_service.py", "src/services/order_service.py"],
+        "root_cause": "Missing error handling on gateway timeout - order marked as paid but payment never completed",
+        "resolution": "Added idempotent retry with payment state verification before order status update"
+    },
+    {
+        "incident_id": "INC-2650",
+        "severity": "P3",
+        "date": "2024-06-20",
+        "title": "Refund endpoint returning 500 for already-refunded orders",
+        "affected_files": ["src/api/refund_endpoint.py"],
+        "root_cause": "No idempotency check - duplicate refund request hit unique constraint in DB",
+        "resolution": "Added idempotency check before processing refund"
+    }
+]

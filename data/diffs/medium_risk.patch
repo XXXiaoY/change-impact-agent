@@ -1,0 +1,17 @@
+diff --git a/src/utils/validation.py b/src/utils/validation.py
+index 3a4b5c6..7d8e9f0 100644
+--- a/src/utils/validation.py
++++ b/src/utils/validation.py
+@@ -7,9 +7,13 @@ class ValidationError(Exception):
+ 
+ def validate_positive_amount(amount: float) -> None:
+     """Validate that an amount is positive."""
++    if not isinstance(amount, (int, float)):
++        raise ValidationError(f"Amount must be numeric, got {type(amount).__name__}")
+     if amount <= 0:
+         raise ValidationError(f"Amount must be positive, got {amount}")
++    if amount > 1_000_000:
++        raise ValidationError(f"Amount exceeds maximum allowed: {amount}")
+ 
+ 
+ def validate_currency(currency: str) -> None:

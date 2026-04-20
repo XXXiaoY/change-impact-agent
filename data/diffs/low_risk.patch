@@ -1,0 +1,16 @@
+diff --git a/src/services/inventory_service.py b/src/services/inventory_service.py
+index 2a3b4c5..6d7e8f9 100644
+--- a/src/services/inventory_service.py
++++ b/src/services/inventory_service.py
+@@ -50,3 +50,11 @@ class InventoryService:
+         """Add stock for an item."""
+         validate_positive_amount(quantity)
+         self._stock[item_id] = self._stock.get(item_id, 0) + quantity
++
++    def get_low_stock_items(self, threshold: int = 5) -> list[dict]:
++        """Return items with stock below threshold."""
++        low_stock = []
++        for item_id, quantity in self._stock.items():
++            if quantity < threshold:
++                low_stock.append({"item_id": item_id, "quantity": quantity})
++        return low_stock

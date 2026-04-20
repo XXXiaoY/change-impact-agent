@@ -1,0 +1,46 @@
+diff --git a/src/services/payment_service.py b/src/services/payment_service.py
+index 1a2b3c4..5d6e7f8 100644
+--- a/src/services/payment_service.py
++++ b/src/services/payment_service.py
+@@ -30,14 +30,20 @@ class PaymentService:
+         transaction_id = self.gateway.charge(
+             order.order_id, order.total_amount, order.currency
+         )
+         return transaction_id
+ 
+-    def process_refund(self, order: Order, refund: Refund) -> Refund:
+-        """Process a refund for an order."""
++    def process_refund(self, order: Order, refund: Refund, reason: str = "") -> Refund:
++        """Process a refund for an order.
++        
++        Args:
++            order: The original order
++            refund: Refund details
++            reason: Reason for refund, used for audit logging
++        """
+         validate_positive_amount(refund.amount)
+         self._validate_refund_amount(order, refund)
+ 
+         transaction_id = f"TXN-{order.order_id}"
+         self.gateway.submit_refund(
+             transaction_id, refund.amount, order.currency
+         )
+ 
++        self._log_refund_audit(order, refund, reason)
+         refund.status = RefundStatus.PROCESSED
+         return refund
+ 
+@@ -48,6 +54,12 @@ class PaymentService:
+             raise ValueError(
+                 f"Refund amount {refund.amount} exceeds order total {order.total_amount}"
+             )
+ 
++    def _log_refund_audit(self, order: Order, refund: Refund, reason: str) -> None:
++        """Log refund for audit trail."""
++        # In production, this writes to audit log service
++        print(f"AUDIT: Refund {refund.refund_id} for order {order.order_id}, "
++              f"amount={refund.amount}, reason={reason}")
++
+     def get_payment_status(self, transaction_id: str) -> str:
+         """Check payment status from gateway."""
+         # Simplified - would call gateway API

@@ -1,0 +1,30 @@
+# Agent orchestration
+langgraph>=0.2.0
+langchain-openai>=0.2.0
+langchain-core>=0.3.0
+
+# Code parsing
+tree-sitter>=0.23.0
+tree-sitter-python>=0.23.0
+
+# Vector database
+pgvector>=0.3.0
+psycopg2-binary>=2.9.0
+sqlalchemy>=2.0.0
+
+# Embedding & LLM
+openai>=1.40.0
+
+# Git operations
+gitpython>=3.1.0
+
+# API
+fastapi>=0.115.0
+uvicorn>=0.30.0
+
+# Data models
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# Utilities
+python-dotenv>=1.0.0
