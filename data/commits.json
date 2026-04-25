@@ -1,0 +1,100 @@
+[
+  {
+    "commit_id": "a3f9c21",
+    "date": "2026-04-02",
+    "author": "alice@example.com",
+    "message": "Fix refund amount validation for partial refunds",
+    "affected_files": [
+      "src/services/payment_service.py"
+    ],
+    "diff_summary": "Modified _validate_refund_amount to compare against remaining refundable amount instead of original order total. Added unit test for partial refund edge case.",
+    "related_incidents": [
+      "INC-4521"
+    ]
+  },
+  {
+    "commit_id": "b7e2d88",
+    "date": "2026-03-28",
+    "author": "bob@example.com",
+    "message": "Add async refund processing with timeout",
+    "affected_files": [
+      "src/services/order_service.py",
+      "src/services/payment_service.py"
+    ],
+    "diff_summary": "Wrapped payment_service.process_refund call in asyncio.wait_for with 5s timeout. Resolves cancellation timeout under load.",
+    "related_incidents": [
+      "INC-3892"
+    ]
+  },
+  {
+    "commit_id": "c1d4a55",
+    "date": "2026-03-20",
+    "author": "alice@example.com",
+    "message": "Refactor PaymentService: extract gateway interaction",
+    "affected_files": [
+      "src/services/payment_service.py"
+    ],
+    "diff_summary": "Extracted PaymentGateway as separate class. process_payment and process_refund now delegate to gateway.charge / gateway.submit_refund. No behavioral change intended.",
+    "related_incidents": []
+  },
+  {
+    "commit_id": "d8f6b13",
+    "date": "2026-03-10",
+    "author": "carol@example.com",
+    "message": "Add optimistic locking to inventory stock updates",
+    "affected_files": [
+      "src/services/inventory_service.py"
+    ],
+    "diff_summary": "Added version column check to reserve_stock and release_stock. Prevents race condition observed during flash sales.",
+    "related_incidents": [
+      "INC-3654"
+    ]
+  },
+  {
+    "commit_id": "e2a9c47",
+    "date": "2026-02-25",
+    "author": "bob@example.com",
+    "message": "Add input validation helpers (currency, amount, customer_id)",
+    "affected_files": [
+      "src/utils/validators.py",
+      "src/services/order_service.py",
+      "src/services/payment_service.py"
+    ],
+    "diff_summary": "New validators module with validate_currency, validate_positive_amount, validate_customer_id. Wired into OrderService.create_order and PaymentService.process_payment.",
+    "related_incidents": []
+  },
+  {
+    "commit_id": "f5b8e92",
+    "date": "2026-02-18",
+    "author": "alice@example.com",
+    "message": "Add RefundEndpoint for external refund API",
+    "affected_files": [
+      "src/api/refund_endpoint.py"
+    ],
+    "diff_summary": "New REST endpoint POST /refunds. Calls OrderService.get_order then PaymentService.process_refund. Note: integration tests not added in this PR.",
+    "related_incidents": []
+  },
+  {
+    "commit_id": "g3c7d61",
+    "date": "2026-02-05",
+    "author": "carol@example.com",
+    "message": "Tighten cancel_order: validate state before refund",
+    "affected_files": [
+      "src/services/order_service.py"
+    ],
+    "diff_summary": "cancel_order now checks order.is_cancellable() before triggering refund and inventory release. Raises ValueError on invalid state.",
+    "related_incidents": []
+  },
+  {
+    "commit_id": "h9e4f33",
+    "date": "2026-01-22",
+    "author": "bob@example.com",
+    "message": "Initial OrderService implementation",
+    "affected_files": [
+      "src/services/order_service.py",
+      "src/models/order.py"
+    ],
+    "diff_summary": "OrderService with create_order, pay_order, cancel_order. Coordinates between InventoryService and PaymentService.",
+    "related_incidents": []
+  }
+]
