@@ -98,9 +98,17 @@ def search(query: str, top_k: int = 5, filters: dict = None) -> list[dict]:
 	filter_params = {}
 	if filters:
 		for i, (key, value) in enumerate(filters.items()):
-			param_name = f"filter_{i}"
-			filter_clauses.append(f"metadata->>'{key}' = :{param_name}")
-			filter_params[param_name] = str(value).lower() if isinstance(value, bool) else str(value)
+			if isinstance(value, list):
+				in_params = []
+				for j, v in enumerate(value):
+					param_name = f"filter_{i}_{j}"
+					filter_params[param_name] = str(v).lower() if isinstance(v, bool) else str(v)
+					in_params.append(f":{param_name}")
+				filter_clauses.append(f"metadata->>'{key}' IN ({', '.join(in_params)})")
+			else:
+				param_name = f"filter_{i}"
+				filter_clauses.append(f"metadata->>'{key}' = :{param_name}")
+				filter_params[param_name] = str(value).lower() if isinstance(value, bool) else str(value)
 
 	where_clause = ""
 	if filter_clauses:
